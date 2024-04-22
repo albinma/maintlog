@@ -1,0 +1,12 @@
+# Ignore artifacts:
+.next
+node_modules
+public
+next-env.d.ts
+yarn.lock
+
+# Ignore local files
+.gitignore
+LICENSE
+README.md
+.env

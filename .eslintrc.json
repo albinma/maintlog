@@ -1,3 +1,28 @@
 {
-  "extends": "next/core-web-vitals"
+  "parserOptions": { "project": "./tsconfig.json" },
+  "extends": [
+    "next",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    "curly": ["error", "all"],
+    "eqeqeq": ["error", "allow-null"],
+    "prettier/prettier": ["warn"],
+    "no-console": ["error"],
+    "no-nested-ternary": ["error"],
+    "no-undef": ["off"],
+    "spaced-comment": ["error", "always", { "markers": ["/"] }],
+
+    // Typescript
+    "@typescript-eslint/no-explicit-any": 2,
+    "@typescript-eslint/no-floating-promises": 2,
+    "@typescript-eslint/no-unused-vars": 2,
+    "@typescript-eslint/no-non-null-assertion": 2,
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      { "allowExpressions": true, "allowTypedFunctionExpressions": true }
+    ]
+  }
 }
