@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Vehicle {
+  id               Int              @id @default(autoincrement())
+  vin              String           @db.VarChar(255)
+  year             Int
+  make             String           @db.VarChar(255)
+  model            String           @db.VarChar(255)
+  trim             String?          @db.VarChar(255)
+  mfrBodyCode      String?          @map("mfr_body_code") @db.VarChar(255)
+  engineCode       String?          @map("engine_code") @db.VarChar(255)
+  transmissionCode String?          @map("transmission_code") @db.VarChar(255)
+  modelNumber      String?          @map("model_number") @db.VarChar(255)
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  maintenanceLogs  MaintenanceLog[]
+  parts            VehiclePart[]
+
+  @@map("vehicles")
+}
+
+model VehiclePart {
+  id                     Int      @id @default(autoincrement())
+  vehicle                Vehicle? @relation(fields: [vehicleId], references: [id])
+  vehicleId              Int?     @map("vehicle_id")
+  name                   String   @db.VarChar(255)
+  description            String?  @db.Text
+  productLink            String?  @map("product_link") @db.VarChar(255)
+  partNumber             String?  @map("part_number") @db.VarChar(255)
+  manufacturer           String?  @db.VarChar(255)
+  manufacturerPartNumber String?  @map("manufacturer_part_number") @db.VarChar(255)
+
+  createdAt                 DateTime                    @default(now()) @map("created_at")
+  updatedAt                 DateTime                    @updatedAt @map("updated_at")
+  MaintenanceLogVehiclePart MaintenanceLogVehiclePart[]
+}
+
+model MaintenanceLog {
+  id                        Int                         @id @default(autoincrement())
+  vehicleId                 Int                         @map("vehicle_id")
+  vehicle                   Vehicle                     @relation(fields: [vehicleId], references: [id])
+  date                      DateTime
+  mileage                   Int
+  description               String                      @db.Text
+  notes                     String?                     @db.Text
+  createdAt                 DateTime                    @default(now()) @map("created_at")
+  updatedAt                 DateTime                    @updatedAt @map("updated_at")
+  maintenanceLogType        MaintenanceLogType[]
+  maintenanceLogVehiclePart MaintenanceLogVehiclePart[]
+
+  @@map("maintenance_logs")
+}
+
+model MaintenanceType {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @db.VarChar(255)
+  description        String?              @db.Text
+  recurring          Boolean              @default(false)
+  mileage            Int?
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @updatedAt @map("updated_at")
+  maintenanceLogType MaintenanceLogType[]
+
+  @@map("maintenance_types")
+}
+
+model MaintenanceLogType {
+  maintenanceLogId  Int             @map("maintenance_log_id")
+  maintenanceLog    MaintenanceLog  @relation(fields: [maintenanceLogId], references: [id])
+  maintenanceTypeId Int             @map("maintenance_type_id")
+  maintenanceType   MaintenanceType @relation(fields: [maintenanceTypeId], references: [id])
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+
+  @@id([maintenanceLogId, maintenanceTypeId])
+  @@map("maintenance_log_types")
+}
+
+model MaintenanceLogVehiclePart {
+  maintenanceLogId Int            @map("maintenance_log_id")
+  maintenanceLog   MaintenanceLog @relation(fields: [maintenanceLogId], references: [id])
+  vehiclePartId    Int            @map("vehicle_part_id")
+  vehiclePart      VehiclePart    @relation(fields: [vehiclePartId], references: [id])
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  @@id([maintenanceLogId, vehiclePartId])
+  @@map("maintenance_log_vehicle_parts")
+}
