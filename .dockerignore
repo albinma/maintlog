@@ -1,0 +1,14 @@
+.docker/
+.husky/
+.vscode/
+node_modules/
+.editorconfig
+.eslintignore
+.eslintrc.json
+.gitignore
+.lintstagedrc
+.prettierignore
+.prettierrc
+compose.yml
+LICENSE
+README.md

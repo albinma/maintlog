@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    healthcheck:
+      test:
+        ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', '${DATABASE_USER}']
+      timeout: 5s
+      interval: 10s
+      retries: 5
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - '${DATABASE_PORT}:${DATABASE_PORT}'
+    volumes:
+      - ./.docker/db:/var/lib/postgresql/data
