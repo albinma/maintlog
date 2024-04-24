@@ -1,12 +1,11 @@
-version: "3.7"
+version: '3.7'
 
 services:
   postgres:
     image: postgres:latest
     restart: always
     healthcheck:
-      test:
-        ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', '${DATABASE_USER}']
+      test: ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', '${DATABASE_USER}']
       timeout: 5s
       interval: 10s
       retries: 5
