@@ -14,19 +14,60 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  name      String?
-  password  String
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  vehicles  Vehicle[]
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  accounts      Account[]
+  sessions      Session[]
+  vehicles      Vehicle[]
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
 
   @@map("users")
 }
 
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String   @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
 model Vehicle {
-  id               Int              @id @default(autoincrement())
+  id               String           @id @default(cuid())
   vin              String           @db.VarChar(255)
   nickname         String?          @db.VarChar(255)
   year             Int
@@ -42,7 +83,7 @@ model Vehicle {
   updatedAt        DateTime         @updatedAt @map("updated_at")
   maintenanceLogs  MaintenanceLog[]
   parts            VehiclePart[]
-  ownerId          Int              @map("owner_id")
+  ownerId          String           @map("owner_id")
   owner            User             @relation(fields: [ownerId], references: [id])
 
   @@unique([vin, ownerId])
@@ -50,24 +91,23 @@ model Vehicle {
 }
 
 model VehiclePart {
-  id                     Int      @id @default(autoincrement())
-  vehicle                Vehicle? @relation(fields: [vehicleId], references: [id])
-  vehicleId              Int?     @map("vehicle_id")
-  name                   String   @db.VarChar(255)
-  description            String?  @db.Text
-  productLink            String?  @map("product_link") @db.VarChar(255)
-  partNumber             String?  @map("part_number") @db.VarChar(255)
-  manufacturer           String?  @db.VarChar(255)
-  manufacturerPartNumber String?  @map("manufacturer_part_number") @db.VarChar(255)
-
+  id                        String                      @id @default(cuid())
+  vehicle                   Vehicle                     @relation(fields: [vehicleId], references: [id])
+  vehicleId                 String                      @map("vehicle_id")
+  name                      String                      @db.VarChar(255)
+  description               String?                     @db.Text
+  productLink               String?                     @map("product_link") @db.VarChar(255)
+  partNumber                String?                     @map("part_number") @db.VarChar(255)
+  manufacturer              String?                     @db.VarChar(255)
+  manufacturerPartNumber    String?                     @map("manufacturer_part_number") @db.VarChar(255)
   createdAt                 DateTime                    @default(now()) @map("created_at")
   updatedAt                 DateTime                    @updatedAt @map("updated_at")
-  MaintenanceLogVehiclePart MaintenanceLogVehiclePart[]
+  maintenanceLogVehiclePart MaintenanceLogVehiclePart[]
 }
 
 model MaintenanceLog {
-  id                        Int                         @id @default(autoincrement())
-  vehicleId                 Int                         @map("vehicle_id")
+  id                        String                      @id @default(cuid())
+  vehicleId                 String                      @map("vehicle_id")
   vehicle                   Vehicle                     @relation(fields: [vehicleId], references: [id])
   date                      DateTime
   mileage                   Int
@@ -82,7 +122,7 @@ model MaintenanceLog {
 }
 
 model MaintenanceType {
-  id                 Int                  @id @default(autoincrement())
+  id                 String               @id @default(cuid())
   name               String               @db.VarChar(255)
   description        String?              @db.Text
   recurring          Boolean              @default(false)
@@ -95,9 +135,9 @@ model MaintenanceType {
 }
 
 model MaintenanceLogType {
-  maintenanceLogId  Int             @map("maintenance_log_id")
+  maintenanceLogId  String          @map("maintenance_log_id")
   maintenanceLog    MaintenanceLog  @relation(fields: [maintenanceLogId], references: [id])
-  maintenanceTypeId Int             @map("maintenance_type_id")
+  maintenanceTypeId String          @map("maintenance_type_id")
   maintenanceType   MaintenanceType @relation(fields: [maintenanceTypeId], references: [id])
   createdAt         DateTime        @default(now()) @map("created_at")
   updatedAt         DateTime        @updatedAt @map("updated_at")
@@ -107,9 +147,9 @@ model MaintenanceLogType {
 }
 
 model MaintenanceLogVehiclePart {
-  maintenanceLogId Int            @map("maintenance_log_id")
+  maintenanceLogId String         @map("maintenance_log_id")
   maintenanceLog   MaintenanceLog @relation(fields: [maintenanceLogId], references: [id])
-  vehiclePartId    Int            @map("vehicle_part_id")
+  vehiclePartId    String         @map("vehicle_part_id")
   vehiclePart      VehiclePart    @relation(fields: [vehiclePartId], references: [id])
   createdAt        DateTime       @default(now()) @map("created_at")
   updatedAt        DateTime       @updatedAt @map("updated_at")

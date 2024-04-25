@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import { PrismaClient } from '@prisma/client';
+import { DateTime } from 'luxon';
 const prisma = new PrismaClient();
 
 async function main(): Promise<void> {
@@ -10,8 +11,9 @@ async function main(): Promise<void> {
     update: {},
     create: {
       email,
-      password: 'password',
+      emailVerified: DateTime.utc().toJSDate(),
       name: 'Al',
+      password: 'password',
     },
   });
 
