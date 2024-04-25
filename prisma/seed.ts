@@ -12,23 +12,30 @@ async function main(): Promise<void> {
       email,
       password: 'password',
       name: 'Al',
-      vehicles: {
-        create: {
-          make: 'Toyota',
-          model: 'Tacoma',
-          year: 2002,
-          vin: '5TEWN72N82Z891171',
-          engineCode: '5VZ-FE',
-          mfrBodyCode: 'VZN170',
-          modelNumber: 'VZN170L-CRMDKAB',
-          transmissionCode: 'R150F',
-          trim: 'Base 4wd 2dr Xtra Cab',
-        },
-      },
     },
   });
 
-  console.log(user);
+  const vin = '5TEWN72N82Z891171';
+  const vehicle = await prisma.vehicle.upsert({
+    where: { vin_ownerId: { vin, ownerId: user.id } },
+    update: {},
+    create: {
+      ownerId: user.id,
+      vin,
+      make: 'Toyota',
+      model: 'Tacoma',
+      year: 2002,
+      nickname: 'Taco',
+      colorCode: '3P1',
+      engineCode: '5VZ-FE',
+      mfrBodyCode: 'VZN170',
+      modelNumber: 'VZN170L-CRMDKAB',
+      transmissionCode: 'R150F',
+      trim: 'Base 4wd 2dr Xtra Cab',
+    },
+  });
+
+  console.log({ user, vehicle });
 }
 
 main()
