@@ -13,6 +13,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String?
+  password  String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  vehicles  Vehicle[]
+
+  @@map("users")
+}
+
 model Vehicle {
   id               Int              @id @default(autoincrement())
   vin              String           @db.VarChar(255)
@@ -28,6 +40,8 @@ model Vehicle {
   updatedAt        DateTime         @updatedAt @map("updated_at")
   maintenanceLogs  MaintenanceLog[]
   parts            VehiclePart[]
+  ownerId          Int              @map("owner_id")
+  owner            User             @relation(fields: [ownerId], references: [id])
 
   @@map("vehicles")
 }
@@ -69,7 +83,7 @@ model MaintenanceType {
   name               String               @db.VarChar(255)
   description        String?              @db.Text
   recurring          Boolean              @default(false)
-  mileage            Int?
+  replacementMileage Int?                 @map("replacement_mileage")
   createdAt          DateTime             @default(now()) @map("created_at")
   updatedAt          DateTime             @updatedAt @map("updated_at")
   maintenanceLogType MaintenanceLogType[]
