@@ -1,19 +1,31 @@
 /* eslint-disable no-console */
 
 import { PrismaClient } from '@prisma/client';
-import { DateTime } from 'luxon';
 const prisma = new PrismaClient();
 
 async function main(): Promise<void> {
   const email = 'albinma@gmail.com';
+  const provider = 'google';
+  const providerAccountId = '112804275404666187040';
   const user = await prisma.user.upsert({
     where: { email },
     update: {},
     create: {
-      email,
-      emailVerified: DateTime.utc().toJSDate(),
-      name: 'Al',
-      password: 'password',
+      email: email,
+      name: 'Albin Ma',
+      image:
+        'https://lh3.googleusercontent.com/a/ACg8ocK7g0cHIvN6VSiZuksDfYhL_K3ObuJbJwKfIzmhjSKs_0ZgaJkh8A=s96-c',
+    },
+  });
+
+  const account = await prisma.account.upsert({
+    where: { provider_providerAccountId: { provider, providerAccountId } },
+    update: {},
+    create: {
+      type: 'oidc',
+      provider,
+      providerAccountId,
+      userId: user.id,
     },
   });
 
@@ -37,7 +49,7 @@ async function main(): Promise<void> {
     },
   });
 
-  console.log({ user, vehicle });
+  console.log({ user, account, vehicle });
 }
 
 main()

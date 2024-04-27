@@ -1,16 +1,5 @@
-import { auth } from '@/app/auth';
 import Image from 'next/image';
 
-export default async function UserAvatar(): Promise<JSX.Element | null> {
-  const session = await auth();
-
-  if (!session || !session.user) {
-    return null;
-  }
-
-  return (
-    <div>
-      <Image src={session.user.image ?? ''} alt="User Avatar" />
-    </div>
-  );
+export default async function UserAvatar({ image }: { image: string }) {
+  return <Image src={image} alt="User Avatar" width={15} height={15} />;
 }
