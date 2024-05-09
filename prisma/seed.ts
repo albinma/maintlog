@@ -18,7 +18,7 @@ async function main(): Promise<void> {
     },
   });
 
-  const account = await prisma.account.upsert({
+  await prisma.account.upsert({
     where: { provider_providerAccountId: { provider, providerAccountId } },
     update: {},
     create: {
@@ -30,7 +30,7 @@ async function main(): Promise<void> {
   });
 
   const vin = '5TEWN72N82Z891171';
-  const vehicle = await prisma.vehicle.upsert({
+  await prisma.vehicle.upsert({
     where: { vin_ownerId: { vin, ownerId: user.id } },
     update: {},
     create: {
@@ -48,8 +48,6 @@ async function main(): Promise<void> {
       trim: 'Base 4wd 2dr Xtra Cab',
     },
   });
-
-  console.log({ user, account, vehicle });
 }
 
 main()

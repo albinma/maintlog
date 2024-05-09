@@ -9,11 +9,11 @@ export const metadata: Metadata = {
   description: 'Vehicle Maintenance Logger',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>): JSX.Element {
+}>) {
   return (
     <html lang="en">
       <body className={inter.className}>{children}</body>
