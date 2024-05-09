@@ -1,3 +1,4 @@
+import VehicleSelect from '@/app/components/vehicle-select';
 import { SignInButton } from '@/ui/sign-in';
 import { SignOutButton } from '@/ui/sign-out';
 import { Session } from 'next-auth';
@@ -12,6 +13,7 @@ export default function NavBar({ session }: { session: Session | null }) {
           </span>
         </a>
         <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+          <VehicleSelect />
           {session ? <SignOutButton /> : <SignInButton />}
         </div>
       </div>
