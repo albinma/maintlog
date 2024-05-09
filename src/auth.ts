@@ -8,6 +8,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: 'jwt',
   },
+  callbacks: {
+    session({ session, token }) {
+      if (token && token.sub) {
+        session.user.id = token.sub;
+      }
+
+      return session;
+    },
+  },
   providers: [
     Auth0Provider({
       clientId: process.env.AUTH0_CLIENT_ID,

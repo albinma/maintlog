@@ -1,22 +1,32 @@
 'use client';
 
-import { Button, ListBox, ListBoxItem, Popover, Select, SelectValue } from 'react-aria-components';
+import { useState } from 'react';
+import {
+  Button,
+  Key,
+  ListBox,
+  ListBoxItem,
+  Popover,
+  Select,
+  SelectValue,
+} from 'react-aria-components';
 
-export default function VehicleSelect() {
+export default function VehicleSelect({ vehicleNames }: { vehicleNames: string[] }) {
+  const [vehicle, setVehicle] = useState<Key>(vehicleNames[0]);
+
   return (
-    <Select defaultSelectedKey={1}>
-      <Button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-        <SelectValue defaultValue={'Taco'} />
+    <Select defaultSelectedKey={vehicle} onSelectionChange={(selected) => setVehicle(selected)}>
+      <Button className="border border-black p-2">
+        <SelectValue defaultValue={vehicle} />
         <span aria-hidden="true">▼</span>
       </Button>
-      <Popover>
-        <ListBox>
-          <ListBoxItem>Aardvark</ListBoxItem>
-          <ListBoxItem>Cat</ListBoxItem>
-          <ListBoxItem>Dog</ListBoxItem>
-          <ListBoxItem>Kangaroo</ListBoxItem>
-          <ListBoxItem>Panda</ListBoxItem>
-          <ListBoxItem>Snake</ListBoxItem>
+      <Popover className="border border-black p-2 bg-white">
+        <ListBox className="p-3 space-y-1 text-sm">
+          {vehicleNames.map((vehicleName, index) => (
+            <ListBoxItem className="flex p-2" key={index} id={vehicleName}>
+              {vehicleName}
+            </ListBoxItem>
+          ))}
         </ListBox>
       </Popover>
     </Select>
