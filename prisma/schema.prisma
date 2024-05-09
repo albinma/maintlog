@@ -88,12 +88,12 @@ model Vehicle {
   modelNumber      String? @map("model_number") @db.VarChar(255)
   colorCode        String? @map("color_code") @db.VarChar(255)
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   maintenanceLogs     MaintenanceLog[]
   parts               VehiclePart[]
   vehicleServiceTypes VehicleServiceType[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([vin, ownerId])
   @@map("vehicles")
@@ -158,6 +158,7 @@ model MaintenanceLogVehiclePart {
   maintenanceLog   MaintenanceLog @relation(fields: [maintenanceLogId], references: [id])
   vehiclePartId    String         @map("vehicle_part_id")
   vehiclePart      VehiclePart    @relation(fields: [vehiclePartId], references: [id])
+  cost             Float
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

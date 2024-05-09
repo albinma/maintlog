@@ -5,8 +5,8 @@ const prisma = new PrismaClient();
 
 async function main(): Promise<void> {
   const email = 'albinma@gmail.com';
-  const provider = 'google';
-  const providerAccountId = '112804275404666187040';
+  const provider = 'auth0';
+  const providerAccountId = 'google-oauth2|112804275404666187040';
   const user = await prisma.user.upsert({
     where: { email },
     update: {},
